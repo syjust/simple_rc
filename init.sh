@@ -1,7 +1,9 @@
 #!/bin/bash
 # interactive script to initialize rc files
 # USAGE : $0 [name] [email]
+DIR="`dirname $0`"
 
+[ -e "$DIR/.colors" ] && source "$DIR/.colors"
 
 #{{{ colorize
 # assume colors are exported
