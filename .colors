@@ -1,0 +1,33 @@
+#!/bin/bash
+# Reset
+export _esc="\033[0m"       # Text Reset
+
+# Bold Colors
+# - replace 1; by 00; for Regular
+# - replace 1; by 04; for Underline
+# - replace 1; by 05; for Blink
+# - add 60 for white intensity
+# - add 10 for background color
+export  _black="\033[01;30m" # Black
+export    _red="\033[01;31m" # Red
+export  _green="\033[01;32m" # Green
+export _yellow="\033[01;33m" # Yellow
+export   _blue="\033[01;34m" # Blue
+export _purple="\033[01;35m" # Purple
+export   _cyan="\033[01;36m" # Cyan
+export  _white="\033[01;37m" # White
+
+# Regular White
+export  _rwhite="\033[00;37m"
+
+# Hight Itensity White
+export  _iwhite="\033[00;97m"
+
+# Blink White
+export  _bwhite="\033[05;37m"
+
+# Underline White
+export  _uwhite="\033[04;37m"
+
+# Background Bold Color
+export  _white_on_red="\033[1;37;41m"

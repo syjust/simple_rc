@@ -1,0 +1,30 @@
+[user]
+    name = {USER.NAME}
+    email = {USER.EMAIL}
+[alias]
+    br    = branch
+    bra   = branch --all
+    co    = checkout
+    ci    = commit
+    st    = status --short --branch
+    lg    = log --pretty --graph
+    df    = diff
+    dfs   = diff --name-only
+    dft   = difftool -y
+    cia   = commit --amend
+    rbi   = rebase --interactive
+    rba   = rebase --abort
+    rbc   = rebase --continue
+    mgt   = mergetool -y
+    mga   = merge --abort
+    pwd   = "!git branch | awk '{print $NF}'"
+    pushf = push --force
+    pushu = "!git push --set-upstream origin `git pwd`"
+    sts   = stash --keep-index
+    pop   = stash pop
+    save  = "! f() { local mess=\"$@\"; while [ -z \"$mess\" ] ; do echo -n \"give me a message : \" && read mess; done; git stash save -u \"$mess\"; }; f"
+[color]
+    branch       = auto
+    diff         = auto
+    status       = auto
+    interactive  = auto

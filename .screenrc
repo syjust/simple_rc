@@ -1,0 +1,61 @@
+# resizes
+bind ^j focus down
+bind ^k focus up
+bind ^h focus left
+bind ^l focus right
+bind ^t focus top
+bind ^b focus bottom
+
+# unbind detach
+bind ^d
+bind d
+
+# focus
+# shift + right arrow
+bindkey "\033\133\061\073\062\103" resize +20
+# shift + left arrow
+bindkey "\033\133\061\073\062\104" resize -20
+# ctrl + O
+#bindkey "\017" resize +10
+# ctrl + T
+#bindkey "\024" resize -10
+# ^a /
+bind / resize =
+
+# info status line
+hardstatus alwayslastline "%{= BW} %-Lw%{= WB}%n+%f %t%{-}%+Lw %=[%l]"
+
+# windows number & select
+bind -c select2 0 select 10
+bind -c select2 1 select 11
+bind -c select2 2 select 12
+bind -c select2 3 select 13
+bind -c select2 4 select 14
+bind -c select2 5 select 15
+bind -c select2 6 select 16
+bind -c select2 7 select 17
+bind -c select2 8 select 18
+bind -c select2 9 select 19
+bind - command -c select2
+bind -c number2 0 number 0
+bind -c number2 1 number 1
+bind -c number2 2 number 2
+bind -c number2 3 number 3
+bind -c number2 4 number 4
+bind -c number2 5 number 5
+bind -c number2 6 number 6
+bind -c number2 7 number 7
+bind -c number2 8 number 8
+bind -c number2 9 number 9
+bind = command -c number2
+bind -c number3 0 number 10
+bind -c number3 1 number 11
+bind -c number3 2 number 12
+bind -c number3 3 number 13
+bind -c number3 4 number 14
+bind -c number3 5 number 15
+bind -c number3 6 number 16
+bind -c number3 7 number 17
+bind -c number3 8 number 18
+bind -c number3 9 number 19
+bind + command -c number3
