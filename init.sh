@@ -49,19 +49,24 @@ email="$2"
 #{{{ process
 #
 process() {
-    local action="$1" file="$1"
-    case $action in
-        new)
-            sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file > ~/$file \
-        ;;
-        append)
-            sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file >> ~/$file \
-        ;;
-        *) quit "can't process '$action' !!!" ;;
-    esac
-    [ $? -eq 0 ] \
-        && success "processing $file ... SUCCESS" \
-        || error "processing $file ... ERROR"
+    local action="$1" file="$2"
+    if (diff -q $file ~/$file > /dev/null 2>&1) ; then
+        warning "'$file' & '~/$file' are same !"
+        error "can't process '$action'"
+    else
+        case $action in
+            new)
+                sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file > ~/$file \
+            ;;
+            append)
+                sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file >> ~/$file \
+            ;;
+            *) quit "can't process '$action' !!!" ;;
+        esac
+        [ $? -eq 0 ] \
+            && success "processing $file ... SUCCESS" \
+            || error "processing $file ... ERROR"
+    fi
 }
 #}}}
 
