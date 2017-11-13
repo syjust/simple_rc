@@ -36,14 +36,40 @@ error() {
    colorize _red "$1" 
 }
 #}}}
+#{{{ quit
+quit() {
+    error "ERROR : $@"
+    exit 1
+}
+#}}}
+
+name="$1"
+email="$2"
+
+#{{{ process
+#
+process() {
+    local action="$1" file="$1"
+    case $action in
+        new)
+            sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file > ~/$file \
+        ;;
+        append)
+            sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file >> ~/$file \
+        ;;
+        *) quit "can't process '$action' !!!" ;;
+    esac
+    [ $? -eq 0 ] \
+        && success "processing $file ... SUCCESS" \
+        || error "processing $file ... ERROR"
+}
+#}}}
 
 echo
 info "interactive script to initialize rc files"
 info "USAGE : $0 [name] [email]"
 echo
 
-name="$1"
-email="$2"
 
 while [ -z "$name" ] ; do 
     info "please give me your name : "
@@ -78,9 +104,7 @@ for file in $rc_files ; do
                 read resp
                 case $resp in
                     y|Y)
-                        sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file >> ~/$file \
-                            && success "processing $file ... SUCCESS" \
-                            || error "processing $file ... ERROR"
+                        process append $file
                         done=1
                     ;;
                     n|N) done=1 ;;
@@ -88,15 +112,13 @@ for file in $rc_files ; do
                         error "'$resp' bad response !"
                         warning "please write 'y' or 'n'"
                         done=0
-                        ;;
+                    ;;
                 esac
             done
         else
-            sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file > ~/$file \
-                && success "processing $file ... SUCCESS" \
-                || error "processing $file ... ERROR"
+            process new $file
         fi
     else
-        error "FILE NOT FOUND"
+        quit "FILE NOT FOUND"
     fi
 done
