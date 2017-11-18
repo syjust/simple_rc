@@ -7,8 +7,8 @@ bind ^t focus top
 bind ^b focus bottom
 
 # unbind detach
-bind ^d
-bind d
+#bind ^d
+#bind d
 
 # focus
 # shift + right arrow
