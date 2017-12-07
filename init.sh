@@ -49,23 +49,35 @@ email="$2"
 #{{{ process
 #
 process() {
-    local action="$1" file="$2"
-    if (diff -q $file ~/$file > /dev/null 2>&1) ; then
-        warning "'$file' & '~/$file' are same !"
+    local action="$1" target="$2"
+    if (diff -q $target ~/$target > /dev/null 2>&1) ; then
+        warning "'$target' & '~/$target' are same !"
         error "can't process '$action'"
     else
         case $action in
+            dir)
+              if [ ! -d ~/$target ] ; then
+                if [ ! -e ~/$target ] ; then
+                  mkdir -p -v ~/$target
+                else
+                  warning "~/$target is a file, can't creaate directory"
+                  [ ! -e ~/$target ]
+                fi
+              else
+                info "~/$target directory already exists"
+              fi
+            ;;
             new)
-                sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file > ~/$file \
+                sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $target > ~/$target \
             ;;
             append)
-                sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $file >> ~/$file \
+                sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $target >> ~/$target \
             ;;
             *) quit "can't process '$action' !!!" ;;
         esac
         [ $? -eq 0 ] \
-            && success "processing $file ... SUCCESS" \
-            || error "processing $file ... ERROR"
+            && success "processing $target ... SUCCESS" \
+            || error "processing $target ... ERROR"
     fi
 }
 #}}}
@@ -126,4 +138,10 @@ for file in $rc_files ; do
     else
         quit "FILE NOT FOUND"
     fi
+done
+rc_dirs="
+  .vim/undo
+"
+for dir in $rc_dirs ; do
+  process dir $dir
 done
