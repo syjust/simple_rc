@@ -6,3 +6,4 @@ alias l='ls $LS_OPTIONS -lA'
 alias grep="grep --color=auto"
 alias cgrep="grep --color=always"
 export HISTTIMEFORMAT="%F %T "
+export EDITOR=vim
