@@ -109,6 +109,7 @@ rc_files="
 .gitconfig
 .screenrc
 .vimrc
+.tmux.conf
 "
 for file in $rc_files ; do
     info "processing $file ... "
