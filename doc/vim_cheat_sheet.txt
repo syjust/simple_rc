@@ -100,10 +100,14 @@ zR = ouvrir tous les fold markers
 }}}
 
 {{{ ===== mode ligne de commande ===== :
-  :                 : commande
+- passer en mode commande depuis le mode normal avec ":"
+  :11               : aller a la ligne 11
   :gv               : formatage (GUI only)
-  :set paste        :
-  :set nopaste      :
+  :map ' yypkJ      : map le simple quote (') pour effectuer une serie d'action en mode normal
+  :abbr syso system.out.println( :
+    ajoute une abbreviation (syso) qui ecrira system.out.println( en mode insertion
+  :map              : liste les map existantes
+  :abbr             : liste les abbreviations existantes
   :s/a/b/           : modifie 1 fois "a" en "b" sur la ligne courante
   :%s/a/b/          : modifie 1 fois "a" en "b" sur toutes les lignes du document
   :%s/a/b/g         : modifie tous les "a" en "b" sur tout le document
@@ -111,6 +115,7 @@ zR = ouvrir tous les fold markers
     ajoute "---" apres tout espace trouve 0 ou n fois au debut des lignes du document
   :%s/\(^[[:blank:]]\{1,}\)/\1---/g  :
     ajoute "---" apres tout espace trouve au moins 1 fois au debut des lignes du document
+    (regex backreference \(\) => \1)
   :g/^$/d           : supprime toutes les lignes vierges
   :g!/^$/d          : supprime toutes les lignes non vierges
   :help version-7.2 :
@@ -122,19 +127,30 @@ zR = ouvrir tous les fold markers
   :.w! buff.txt     : ecrit la ligne courante dans buff.txt
   :'<,'>w! buff.txt : ecrit le fichier courante dans buff.txt
   :r buff.txt       : lit le fichier buff.txt a la position courante
-  C-f               : permet d'editer l'historique des commandes ou des recherches en mode normal ...!
+  C-f               : permet d'editer l'historique des commandes (ou des recherches) en mode normal ...!
 - navigation (netrw) :
-  :split            : ouvre le fichier courant en mode horizontal
-  :vert split       : ouvre le fichier courant en mode vertical
+  :split            : re-ouvre le fichier courant en mode horizontal
+  :vert split       : re-ouvre le fichier courant en mode vertical
   :split ./         : ouvre le repertoire dans lequel vim a ete lance en mode horizontal
   :vert split /path/to/filename :
-    ouvre un fichier mode vertical (un chemin relatif se base sur le path dans lequel est lance vim)
+    ouvre un fichier en mode vertical (un chemin relatif se base sur le path dans lequel est lance vim)
     voir "c" pour changer le path courant en mode netrw (Hex / C-w f)
-  :Ex               : ouvre le repertoire du fichier courant a la place du fichier courant
+  :vert diffsplit /path/to/filename :
+    ouvre un fichier en mode vertical et montre les differences avec le fichier courant
+  :Ex               : ouvre le repertoire du fichier courant et ferme le fichier courant (si non modifie)
   :Hex              : ouvre le repertoire du fichier courant en split horizontal
   :Vex              : ouvre le repertoire du fichier courant en split Vertical
   :diffupdate       : re-scan the files for differences
   :diffoff          : stop diff between splited files
+}}}
+
+{{{ ===== mode recherche ===== :
+- passer en mode recherche depuis le mode normal avec "/" ou "?"
+  /   : rechercher vers le bas
+  ?   : rechercher vers le bas
+  n   : occurence suivante de la recherche (next)
+  N   : occurence precedente de la recherche (previous)
+  C-f : permet d'editer l'historique des recherches (ou des commandes) en mode normal ...!
 }}}
 
 {{{ ===== mode visuel ===== :
@@ -144,7 +160,7 @@ zR = ouvrir tous les fold markers
     apres la selection en mode visuel
     on peut passer en mode commande et
     faire une action sur la selection :
-  :'<,'>s/lig/LIG/ (voir mode commande)
+  :'<,'>s/lig/LIG/ change lig par LIG dans la selection visuelle (voir mode commande)
 }}}
 
 {{{ ===== mode selection ===== :
