@@ -3,45 +3,12 @@
 # USAGE : $0 [name] [email]
 DIR="`dirname $0`"
 
-[ -e "$DIR/.colors" ] && source "$DIR/.colors"
-
-#{{{ colorize
-# assume colors are exported
-#
-colorize() {
-    echo -e "${!1}${2}${_esc}"
-}
-#}}}
-#{{{ info
-#
-info() {
-   colorize _cyan "$1" 
-}
-#}}}
-#{{{ warning
-#
-warning() {
-   colorize _yellow "$1" 
-}
-#}}}
-#{{{ success
-#
-success() {
-   colorize _green "$1" 
-}
-#}}}
-#{{{ error
-#
-error() {
-   colorize _red "$1" 
-}
-#}}}
-#{{{ quit
-quit() {
-    error "ERROR : $@"
-    exit 1
-}
-#}}}
+if [ -e "$DIR/.log.inc.sh" ] ; then
+    source "$DIR/.log.inc.sh"
+else
+    echo ".log.inc.sh not found... can't continue !"
+    exit 2
+fi
 
 name="$1"
 email="$2"
@@ -110,6 +77,7 @@ rc_files="
 .screenrc
 .vimrc
 .tmux.conf
+.log.inc.sh
 "
 for file in $rc_files ; do
     info "processing $file ... "
