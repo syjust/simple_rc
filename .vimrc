@@ -24,5 +24,5 @@ se shiftwidth=4
 se softtabstop=4
 " fold sections between {{{,}}}
 set foldmethod=marker
-" ^P encapsulate bash function with fold markers
-map  ^ywO#{{{ po#j$%o#}}}%zc
+" ^P encapsulate bash function with fold markers & export funcname
+map  ^ywO# {{{ function po#j$%opIexport -f o# }}}%zc
