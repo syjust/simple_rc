@@ -84,4 +84,22 @@ quit() {
 export -f quit
 # }}}
 
+# {{{ function yes_no
+#
+yes_no() {
+    local mess="$1"
+    local resp
+    while true ; do
+        echo "$mess (y/n) ?"
+        read resp
+        case $resp in
+            [yY]|[yY][eE][sS]) return 0 ;;
+            [nN]|[nN][oO]) return 1 ;;
+            *) "'$resp' : bad resp ! please answer with 'yes' or 'no' ('y' or 'n')." ;;
+        esac
+    done
+}
+export -f yes_no
+# }}}
+
 # }}}
