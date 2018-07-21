@@ -2,6 +2,8 @@
 # interactive script to initialize rc files
 # USAGE : $0 [name] [email]
 DIR="`dirname $0`"
+SCRIPT="`basename ${0/.sh/}`"
+TMP="`mktemp /tmp/$SCRIPT.tmp.XXXXXX`"
 
 if [ -e "$DIR/.log.inc.sh" ] ; then
     source "$DIR/.log.inc.sh"
@@ -17,35 +19,40 @@ email="$2"
 #
 process() {
     local action="$1" target="$2"
-    if (diff -q $target ~/$target > /dev/null 2>&1) ; then
-        warning "'$target' & '~/$target' are same !"
-        error "can't process '$action'"
-    else
-        case $action in
-            dir)
-              if [ ! -d ~/$target ] ; then
-                if [ ! -e ~/$target ] ; then
-                  mkdir -p -v ~/$target
-                else
-                  warning "~/$target is a file, can't creaate directory"
-                  [ ! -e ~/$target ]
-                fi
-              else
-                info "~/$target directory already exists"
-              fi
-            ;;
-            new)
-                sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $target > ~/$target \
-            ;;
-            append)
-                sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $target >> ~/$target \
-            ;;
-            *) quit "can't process '$action' !!!" ;;
-        esac
-        [ $? -eq 0 ] \
-            && success "processing $target ... SUCCESS" \
-            || error "processing $target ... ERROR"
+    [ -z "$action" -o -z "$target" ] && quit "action:'$action' & target:'$target' must be given"
+    if [ "$action" != 'dir' -a -f "$target" ] ; then
+       sed 's#{USER.NAME}#'"$name"'#g;s#{USER.EMAIL}#'"$email"'#g' $target > $TMP
     fi
+    case $action in
+        dir)
+          if [ ! -d ~/$target ] ; then
+            if [ ! -e ~/$target ] ; then
+              mkdir -p -v ~/$target
+            else
+              warning "~/$target is a file, can't create directory"
+              [ ! -e ~/$target ]
+            fi
+          else
+            info "~/$target directory already exists"
+          fi
+        ;;
+        new|replace)
+            cp $TMP ~/$target
+        ;;
+        append)
+            cat $TMP >> ~/$target
+        ;;
+        diff)
+            diff -U3 $TMP ~/$target | less -R
+        ;;
+        vimdiff)
+            diff $TMP ~/$target
+        ;;
+        *) quit "can't process action '$action' on target '$target' !!!" ;;
+    esac
+    [ $? -eq 0 ] \
+        && success "processing $action $target ... SUCCESS" \
+        || error "processing $target ... ERROR"
 }
 #}}}
 
@@ -55,7 +62,7 @@ info "USAGE : $0 [name] [email]"
 echo
 
 
-while [ -z "$name" ] ; do 
+while [ -z "$name" ] ; do
     info "please give me your name : "
     read name
     [ -z "$name" ] \
@@ -86,20 +93,29 @@ for file in $rc_files ; do
             warning "~/$file already exists"
             done=0
             while [ $done -eq 0 ] ; do
-                info "Do you want append $file >> ~/$file (y/N)"
-                read resp
-                case $resp in
-                    y|Y)
-                        process append $file
-                        done=1
-                    ;;
-                    n|N) done=1 ;;
-                    *)
-                        error "'$resp' bad response !"
-                        warning "please write 'y' or 'n'"
-                        done=0
-                    ;;
-                esac
+                info "What do you want to do now with '$file' ?"
+                select resp in append replace diff vimdiff nothing ; do
+                    case $resp in
+                        append|replace)
+                            if (yes_no "Are you sure you want $resp from $file to ~/$file") ; then
+                                process $resp $file \
+                                && done=1 \
+                                || done=0
+                            else
+                                done=0
+                            fi
+                        break ;;
+                        diff|vimdiff)
+                            process $resp $file
+                            done=0
+                        break ;;
+                        nothing) done=1 ; break ;;
+                        *)  error "'$resp' bad response !"
+                            warning "please write only one of purposes 'append', 'replace', 'diff' or 'nothing'"
+                            done=0
+                        break ;;
+                    esac
+                done
             done
         else
             process new $file
