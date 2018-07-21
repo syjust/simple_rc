@@ -78,7 +78,7 @@ export -f info
 # {{{ function quit
 #
 quit() {
-    error $@
+    error "${FUNCNAME[1]}: $@"
     exit 1
 }
 export -f quit
