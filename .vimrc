@@ -15,7 +15,7 @@ se autoindent
 " tab as space
 se expandtab
 " filname in status line
-se statusline=2
+"se statusline=2
 " command mode & search mode history
 se history=1000
 " tab indentation space
