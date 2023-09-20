@@ -21,10 +21,10 @@ export  _white_on_red="\033[1;37;41m"
 #
 log() {
     local ls_args=""
-    while [ "x${1:0:1}" == "x-" ] ; do
+    while [[ "x${1:0:1}" == "x-" ]] ; do
         ls_args="$ls_args $1" ; shift
     done
-    echo $ls_args "[`date "+%F %T"`]: $@"
+    echo ${ls_args} "[`date "+%F %T"`]: $@"
 }
 export -f log
 # }}}
@@ -34,11 +34,11 @@ export -f log
 color_and_prefix() {
     local ls_args="-e"
     local color="$1" ; shift
-    while [ "x${1:0:1}" == "x-" ] ; do
+    while [[ "x${1:0:1}" == "x-" ]] ; do
         ls_args="$ls_args $1" ; shift
     done
     local prefix="`echo ${FUNCNAME[1]} | tr [[:lower:]] [[:upper:]]`"
-    log $ls_args "${!color}$prefix : $@${_esc}"
+    log ${ls_args} "${!color}$prefix : $@${_esc}"
 }
 export -f color_and_prefix
 # }}}
@@ -86,18 +86,22 @@ export -f quit
 
 # {{{ function yes_no
 #
+export FORCE_YES=0
 yes_no() {
-    local mess="$1"
-    local resp
-    while true ; do
-        echo "$mess (y/n) ?"
-        read resp
-        case $resp in
-            [yY]|[yY][eE][sS]) return 0 ;;
-            [nN]|[nN][oO]) return 1 ;;
-            *) "'$resp' : bad resp ! please answer with 'yes' or 'no' ('y' or 'n')." ;;
-        esac
-    done
+    if [[ ${FORCE_YES} -ne 1 ]] ; then
+        local mess="$1"
+        local resp
+        while true ; do
+            echo "$mess (y/n) ?"
+            read resp;
+            case ${resp} in
+                [yY]|[yY][eE][sS]) return 0 ;;
+                [nN]|[nN][oO]) return 1 ;;
+                *) echo "'$resp' : bad resp ! please answer with 'yes' or 'no' ('y' or 'n')." ;;
+            esac
+        done
+    fi
+    return 0
 }
 export -f yes_no
 # }}}
