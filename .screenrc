@@ -1,3 +1,5 @@
+# Change ^a by ^z for sub-screen remote processes
+#escape ^zz
 # resizes
 bind ^j focus down
 bind ^k focus up
@@ -22,8 +24,14 @@ bindkey "\033\133\061\073\062\104" resize -20
 # ^a /
 bind / resize =
 
-# info status line
-hardstatus alwayslastline "%{= BW} %-Lw%{= WB}%n+%f %t%{-}%+Lw %=[%l]"
+# BLUE info status line
+hardstatus alwayslastline "%{= bY}%H (%S) -%{= BW} %-Lw%{= WB}%n+%f %t%{-}%+Lw %=[%l]"
+# YELLOW info status line (wip)
+#hardstatus alwayslastline "%{= yk}%H (%S) - %{= Yk} %-Lw%{= kY}%n+%f %t%{-}%+Lw %=[%l]"
+# MAGENTA info status line (todo)
+#hardstatus alwayslastline "%{= mY}%H (%S) - %{= MW} %-Lw%{= WM}%n+%f %t%{-}%+Lw %=[%l]"
+# RED info status line
+#hardstatus alwayslastline "%{= rY}%H (%S) - %{= RW} %-Lw%{= WR}%n+%f %t%{-}%+Lw %=[%l]"
 
 # windows number & select
 bind -c select2 0 select 10
@@ -59,3 +67,13 @@ bind -c number3 7 number 17
 bind -c number3 8 number 18
 bind -c number3 9 number 19
 bind + command -c number3
+
+chdir $HOME
+screen -t HOME
+screen -t TEST
+#chdir $HOME/${STY}
+#screen -t ${STY}-GIT
+#screen -t ${STY}-CLI
+#screen -t ${STY}-SRV
+#screen -t ${STY}-LOG
+#chdir $HOME
