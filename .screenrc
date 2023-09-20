@@ -1,5 +1,13 @@
 # Change ^a by ^z for sub-screen remote processes
 #escape ^zz
+
+# uncomment following "unbinds" if you are using the current screenrc in a local context to ssh in remote with ^zz as master hotkey
+##unbind ^Z (suspend) -- usable in a remote sub screen porcess
+#bind ^Z
+##unbind z (suspend) -- usable in a remote sub screen porcess
+#bind z
+
+
 # resizes
 bind ^j focus down
 bind ^k focus up
