@@ -7,7 +7,8 @@
     co    = checkout
     ci    = commit
     st    = status --short --branch
-    lg    = log --pretty --graph
+    lg    = log --pretty='format:%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%aN>%Creset' --abbrev=8 --abbrev-commit --date=iso --graph
+    lga   = log --pretty='format:%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%aN>%Creset' --abbrev=8 --abbrev-commit --date=iso --graph --all
     df    = diff
     dfs   = diff --name-only
     dft   = difftool -y
