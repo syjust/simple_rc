@@ -1,0 +1,85 @@
+name: Send changelogs to Slack
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: 'Nom de la release (pour test)'
+        required: false
+        default: 'vX.Y.Z'
+      release_body:
+        description: 'Notes de release (pour test)'
+        required: false
+        default: |
+          ## What's Changed
+
+          * Feat: patati patata
+          * Fix: Foo BAr bAZ
+          * Devx: make it to the max
+
+          **Full Changelog**: https://github.com/org/repo/compare/1.0.0...1.1.0
+
+  release:
+    types:
+      - published
+      - created # Triggered by hotfixes created directly in a published state
+
+jobs:
+  slack-notification:
+    name: Slack Notification
+    runs-on: ubuntu-22.04
+    environment:
+      name: PROD
+
+    # Make sure we do nothing on drafts
+    if: github.event.release.draft != 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get release notes
+        id: release-notes
+        run: |
+          # Retrieve the release notes from the repository itself to prevent release notes from being truncated
+          # cf. https://github.community/t/set-output-truncates-multiline-strings/16852
+          RELEASE_NOTES="$(cat $GITHUB_EVENT_PATH | jq -r .release.body)"
+          RELEASE_NOTES="${RELEASE_NOTES//'%'/'%25'}"
+          RELEASE_NOTES="${RELEASE_NOTES//$'\n'/'%0A'}"
+          RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
+
+          # Add URLs to GitHub pull requests
+          PULL_REQUEST_URL_START=${{ github.event.repository.html_url }}/pull/
+          ESCAPED_PULL_REQUEST_URL_START=$(printf '%s\n' "$PULL_REQUEST_URL_START" | sed -e 's/[\/&]/\\&/g')
+          RELEASE_NOTES=$(echo $RELEASE_NOTES | sed -E "s/#([0-9]+)/[#\1](${ESCAPED_PULL_REQUEST_URL_START}\1)/g")
+
+          # Add URLs to GitHub profiles
+          PROFILE_URL_START=${{ github.server_url }}/
+          ESCAPED_PROFILE_URL_START=$(printf '%s\n' "$PROFILE_URL_START" | sed -e 's/[\/&]/\\&/g')
+          RELEASE_NOTES=$(echo $RELEASE_NOTES | sed -E "s/@([[:alnum:]-]+)/[@\1](${ESCAPED_PROFILE_URL_START}\1)/g")
+          echo ::set-output name=RELEASE_NOTES::"$RELEASE_NOTES"
+
+      - name: Use Slack markdown
+        uses: LoveToKnow/slackify-markdown-action@v1.0.0
+        id: slack-markdown-release-notes
+        with:
+          text: |
+
+            New release of `${{ github.repository }}` published, **[${{ github.event.release.name }}](${{
+              github.event.release.html_url }})**:
+
+            ${{ vars.release-notes.outputs.RELEASE_NOTES }}
+
+      - name: Send changelog to Slack
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          # Channel `#deploy`
+          channel-id: ${{ vars.SLACK_DEPLOY_CHANNEL_ID }}
+          slack-message: ${{ steps.slack-markdown-release-notes.outputs.text }}
+          payload: |
+            {
+              "username": "${{ github.event.sender.login }}",
+              "icon_url": "${{ github.event.sender.avatar_url }}"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
