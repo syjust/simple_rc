@@ -57,7 +57,7 @@ jobs:
           PROFILE_URL_START=${{ github.server_url }}/
           ESCAPED_PROFILE_URL_START=$(printf '%s\n' "$PROFILE_URL_START" | sed -e 's/[\/&]/\\&/g')
           RELEASE_NOTES=$(echo $RELEASE_NOTES | sed -E "s/@([[:alnum:]-]+)/[@\1](${ESCAPED_PROFILE_URL_START}\1)/g")
-          echo ::set-output name=RELEASE_NOTES::"$RELEASE_NOTES"
+          echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_OUTPUT
 
       - name: Use Slack markdown
         uses: LoveToKnow/slackify-markdown-action@v1.0.0
