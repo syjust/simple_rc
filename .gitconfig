@@ -12,7 +12,8 @@
     lg    = log --pretty='format:%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%aN>%Creset' --abbrev=8 --abbrev-commit --date=iso --graph
     lga   = log --pretty='format:%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%aN>%Creset' --abbrev=8 --abbrev-commit --date=iso --graph --all
     df    = diff
-    dfs   = diff --name-only
+    dfs   = diff --name-status # diff short
+    dfn   = diff --name-only # diff short name-only
     dft   = difftool -y
     cia   = commit --amend
     rbi   = rebase --interactive
